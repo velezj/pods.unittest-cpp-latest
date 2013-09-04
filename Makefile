@@ -1,4 +1,5 @@
 SVN_URL = 'https://unittest-cpp.svn.sourceforge.net/svnroot/unittest-cpp'
+SVN_URL = 'https://svn.code.sf.net/p/unittest-cpp/code/'
 SOURCE_DIR_NAME = 'unittest-cpp'
 
 
