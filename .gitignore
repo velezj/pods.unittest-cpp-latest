@@ -1,0 +1,6 @@
+pod-build/
+*~
+*.touch
+*.tar.*
+unittest-cpp/
+
