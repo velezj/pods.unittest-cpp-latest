@@ -1,5 +1,6 @@
-SVN_URL = 'https://unittest-cpp.svn.sourceforge.net/svnroot/unittest-cpp'
-SVN_URL = 'https://svn.code.sf.net/p/unittest-cpp/code/'
+#SVN_URL = 'https://unittest-cpp.svn.sourceforge.net/svnroot/unittest-cpp'
+#SVN_URL = 'https://svn.code.sf.net/p/unittest-cpp/code/'
+GIT_URL = 'https://github.com/unittest-cpp/unittest-cpp.git'
 SOURCE_DIR_NAME = 'unittest-cpp'
 
 
@@ -31,31 +32,33 @@ ifeq ($(shell uname), Darwin)
   SED=gsed
 endif
 
-all: configure
+all: post_configure
 	@echo "\nbuilt UnitTest++\n"
 
 $(SOURCE_DIR_NAME)/UnitTest++/Makefile:
-	@echo "\n\n CHECKING OUT UnitTest++ \n"
+	@echo "\n\n CLONING UnitTest++ \n"
 	@echo "\nBUILD_PREFIX: $(BUILD_PREFIX)\n\n"
-	@svn co $(SVN_URL) $(SOURCE_DIR_NAME)
+	@git clone $(GIT_URL) $(SOURCE_DIR_NAME)
+	@cd $(SOURCE_DIR_NAME) && git checkout v1.4
 
-$(SOURCE_DIR_NAME)/UnitTest++/libUnitTest++.a: $(SOURCE_DIR_NAME)/UnitTest++/Makefile
-	make -C $(SOURCE_DIR_NAME)/UnitTest++/
+build: $(SOURCE_DIR_NAME)/UnitTest++/Makefile
+	cd $(SOURCE_DIR_NAME) && make
 
 .PHONY: configure
-configure: $(SOURCE_DIR_NAME)/UnitTest++/libUnitTest++.a
+post_configure: build
 
-	# copy library ot /lib
-	@cp $(SOURCE_DIR_NAME)/UnitTest++/libUnitTest++.a $(BUILD_PREFIX)/lib
+	# # copy library ot /lib
+	@cp $(SOURCE_DIR_NAME)/libUnitTest++.a $(BUILD_PREFIX)/lib
 	@mkdir -p $(BUILD_PREFIX)/include/unittest++/
 	@mkdir -p $(BUILD_PREFIX)/include/unittest++/Posix
-	@cp -r $(SOURCE_DIR_NAME)/UnitTest++/src/*.h $(BUILD_PREFIX)/include/unittest++/
-	@cp -r $(SOURCE_DIR_NAME)/UnitTest++/src/Posix/*.h $(BUILD_PREFIX)/include/unittest++/Posix/
+	@cp -r $(SOURCE_DIR_NAME)/src/*.h $(BUILD_PREFIX)/include/unittest++/
+	@cp -r $(SOURCE_DIR_NAME)/src/Posix/*.h $(BUILD_PREFIX)/include/unittest++/Posix/
 
-	# create pck-config file	
+	# # create pck-config file	
 	@mkdir -p $(BUILD_PREFIX)/lib/pkgconfig/
 	@echo "Name: UnitTest++ \nDescription: UnitTest++ (SVN Latest) \nRequires: \nVersion:  \nLibs: -lUnitTest++ \nCflags: -I$(BUILD_PREFIX)/include/unittest++/" > $(BUILD_PREFIX)/lib/pkgconfig/unittest++.pc
 
 
 clean:
 	-if [ -d $(SOURCE_DIR_NAME) ]; then rm -rf $(SOURCE_DIR_NAME); fi
+	rm -rf pod-build
