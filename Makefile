@@ -38,7 +38,7 @@ all: post_configure
 $(SOURCE_DIR_NAME)/UnitTest++/Makefile:
 	@echo "\n\n CLONING UnitTest++ \n"
 	@echo "\nBUILD_PREFIX: $(BUILD_PREFIX)\n\n"
-	@git clone $(GIT_URL) $(SOURCE_DIR_NAME)
+	-if [ ! -d $(SOURCE_DIR_NAME) ]; then git clone $(GIT_URL) $(SOURCE_DIR_NAME); fi
 	@cd $(SOURCE_DIR_NAME) && git checkout v1.4
 
 build: $(SOURCE_DIR_NAME)/UnitTest++/Makefile
